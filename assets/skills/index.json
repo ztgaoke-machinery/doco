@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-30T13:54:29.395Z",
+ "generated": "2026-10-11T08:56:11.957Z",
  "icons": [
   {
    "id": 1001,
@@ -594,7 +594,7 @@
    "name": "点燃",
    "file": "assets/skills/skill_icon_2005.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「点燃」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「点燃」的图标",
    "source": "7k7k"
   },
   {
@@ -602,7 +602,7 @@
    "name": "凤翅天翔",
    "file": "assets/skills/skill_icon_2006.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「凤翅天翔」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「凤翅天翔」的图标",
    "source": "7k7k"
   },
   {
@@ -610,7 +610,7 @@
    "name": "烈焰之拳",
    "file": "assets/skills/skill_icon_2008.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「烈焰之拳」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「烈焰之拳」的图标",
    "source": "7k7k"
   },
   {
@@ -618,7 +618,7 @@
    "name": "回暖",
    "file": "assets/skills/skill_icon_2009.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「回暖」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「回暖」的图标",
    "source": "7k7k"
   },
   {
@@ -626,7 +626,7 @@
    "name": "烈焰冲击",
    "file": "assets/skills/skill_icon_2010.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「烈焰冲击」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「烈焰冲击」的图标",
    "source": "7k7k"
   },
   {
@@ -634,7 +634,7 @@
    "name": "龙卷火焰",
    "file": "assets/skills/skill_icon_2091.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「龙卷火焰」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「龙卷火焰」的图标",
    "source": "7k7k"
   },
   {
@@ -650,7 +650,7 @@
    "name": "熔岩阵",
    "file": "assets/skills/skill_icon_2093.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「熔岩阵」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「熔岩阵」的图标",
    "source": "7k7k"
   },
   {
@@ -658,7 +658,7 @@
    "name": "火壁",
    "file": "assets/skills/skill_icon_2094.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「火壁」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「火壁」的图标",
    "source": "7k7k"
   },
   {
@@ -666,7 +666,7 @@
    "name": "水泡",
    "file": "assets/skills/skill_icon_3005.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「水泡」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「水泡」的图标",
    "source": "7k7k"
   },
   {
@@ -674,7 +674,7 @@
    "name": "激流盾",
    "file": "assets/skills/skill_icon_3009.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「激流盾」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「激流盾」的图标",
    "source": "7k7k"
   },
   {
@@ -834,7 +834,7 @@
    "name": "重水弹",
    "file": "assets/skills/skill_icon_3023.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「重水弹」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「重水弹」的图标",
    "source": "7k7k"
   },
   {
@@ -1218,7 +1218,7 @@
    "name": "冰锥阵",
    "file": "assets/skills/skill_icon_3092.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「冰锥阵」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「冰锥阵」的图标",
    "source": "7k7k"
   },
   {
@@ -1226,7 +1226,7 @@
    "name": "树根突刺",
    "file": "assets/skills/skill_icon_4004.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「树根突刺」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「树根突刺」的图标",
    "source": "7k7k"
   },
   {
@@ -1250,7 +1250,7 @@
    "name": "叶刃",
    "file": "assets/skills/skill_icon_5003.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「叶刃」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「叶刃」的图标",
    "source": "7k7k"
   },
   {
@@ -1258,7 +1258,7 @@
    "name": "风镰阵",
    "file": "assets/skills/skill_icon_5012.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「风镰阵」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「风镰阵」的图标",
    "source": "7k7k"
   },
   {
@@ -1274,7 +1274,7 @@
    "name": "雷神之锤",
    "file": "assets/skills/skill_icon_5092.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「雷神之锤」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「雷神之锤」的图标",
    "source": "7k7k"
   },
   {
@@ -1282,7 +1282,7 @@
    "name": "信标",
    "file": "assets/skills/skill_icon_5093.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「信标」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「信标」的图标",
    "source": "7k7k"
   },
   {
@@ -1290,7 +1290,7 @@
    "name": "狂毒专属",
    "file": "assets/skills/skill_icon_6091.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「狂毒专属」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「狂毒专属」的图标",
    "source": "7k7k"
   },
   {
@@ -1306,7 +1306,7 @@
    "name": "毒蜂群",
    "file": "assets/skills/skill_icon_6093.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「毒蜂群」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「毒蜂群」的图标",
    "source": "7k7k"
   },
   {
@@ -1314,7 +1314,7 @@
    "name": "小圣光术",
    "file": "assets/skills/skill_icon_7091.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「小圣光术」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「小圣光术」的图标",
    "source": "7k7k"
   },
   {
@@ -1322,7 +1322,7 @@
    "name": "圣光剑雨",
    "file": "assets/skills/skill_icon_7092.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「圣光剑雨」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「圣光剑雨」的图标",
    "source": "7k7k"
   },
   {
@@ -1330,7 +1330,7 @@
    "name": "光能爆弹",
    "file": "assets/skills/skill_icon_7093.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「光能爆弹」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「光能爆弹」的图标",
    "source": "7k7k"
   },
   {
@@ -1338,7 +1338,7 @@
    "name": "小魔光术",
    "file": "assets/skills/skill_icon_8091.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「小魔光术」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「小魔光术」的图标",
    "source": "7k7k"
   },
   {
@@ -1346,7 +1346,7 @@
    "name": "暗影箭雨",
    "file": "assets/skills/skill_icon_8092.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「暗影箭雨」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「暗影箭雨」的图标",
    "source": "7k7k"
   },
   {
@@ -1354,9 +1354,93 @@
    "name": "魔能爆弹",
    "file": "assets/skills/skill_icon_8093.png",
    "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
-   "evidence": "被技能表 game/tables/skills-official.js 引用为「魔能爆弹」的图标",
+   "evidence": "被技能表 game/skills-official.js 引用为「魔能爆弹」的图标",
+   "source": "7k7k"
+  },
+  {
+   "id": 900002,
+   "name": "能量激活",
+   "file": "assets/skills/skill_icon_900002.png",
+   "from": "7k7k 角色大全 AI 超分（游戏内原无图标，本次新增并接入 D.SKILLS）"
+  },
+  {
+   "id": 900004,
+   "name": "百裂拳",
+   "file": "assets/skills/skill_icon_900004.png",
+   "from": "7k7k 角色大全 AI 超分（游戏内原无图标，本次新增并接入 D.SKILLS）"
+  },
+  {
+   "id": 900001,
+   "name": "不屈意志",
+   "file": "assets/skills/skill_icon_900001.png",
+   "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
+   "evidence": "被技能表 game/tables/skills-official.js 引用为「不屈意志」的图标",
+   "source": "7k7k"
+  },
+  {
+   "id": 900003,
+   "name": "迅捷飞刀",
+   "file": "assets/skills/skill_icon_900003.png",
+   "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
+   "evidence": "被技能表 game/tables/skills-official.js 引用为「迅捷飞刀」的图标",
+   "source": "7k7k"
+  },
+  {
+   "id": 900005,
+   "name": "嗜血",
+   "file": "assets/skills/skill_icon_900005.png",
+   "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
+   "evidence": "被技能表 game/tables/skills-official.js 引用为「嗜血」的图标",
+   "source": "7k7k"
+  },
+  {
+   "id": 900006,
+   "name": "魔气弹",
+   "file": "assets/skills/skill_icon_900006.png",
+   "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
+   "evidence": "被技能表 game/tables/skills-official.js 引用为「魔气弹」的图标",
+   "source": "7k7k"
+  },
+  {
+   "id": 900007,
+   "name": "魔焰灼烧",
+   "file": "assets/skills/skill_icon_900007.png",
+   "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
+   "evidence": "被技能表 game/tables/skills-official.js 引用为「魔焰灼烧」的图标",
+   "source": "7k7k"
+  },
+  {
+   "id": 900008,
+   "name": "血冰箭",
+   "file": "assets/skills/skill_icon_900008.png",
+   "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
+   "evidence": "被技能表 game/tables/skills-official.js 引用为「血冰箭」的图标",
+   "source": "7k7k"
+  },
+  {
+   "id": 900009,
+   "name": "魔羽箭",
+   "file": "assets/skills/skill_icon_900009.png",
+   "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
+   "evidence": "被技能表 game/tables/skills-official.js 引用为「魔羽箭」的图标",
+   "source": "7k7k"
+  },
+  {
+   "id": 900010,
+   "name": "吸血蔓藤",
+   "file": "assets/skills/skill_icon_900010.png",
+   "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
+   "evidence": "被技能表 game/tables/skills-official.js 引用为「吸血蔓藤」的图标",
+   "source": "7k7k"
+  },
+  {
+   "id": 900011,
+   "name": "血晶地刺",
+   "file": "assets/skills/skill_icon_900011.png",
+   "from": "第 55 轮：7k7k 角色大全缩略图（游戏编号格式）",
+   "evidence": "被技能表 game/tables/skills-official.js 引用为「血晶地刺」的图标",
    "source": "7k7k"
   }
  ],
- "note": " 第 55 轮：按官方技能表 + 图鉴行列对应补齐技能图标（写出 159 张）。 第 55 轮：按官方技能表 + 图鉴行列对应补齐技能图标（写出 159 张）。 第 55 轮：从图鉴裁的 159 个图标**未接入**（行内列序↔技能ID 的假设未通过验证），移到 _tmp_test_out/skill-icons-candidate/ 待核对。assets/skills 只保留已核对的原版 17 个。 第 55 轮：从 7k7k 角色大全接入 39 个技能图标（名字+元素双确认；已用技能保持官方图鉴版）。 第 55 轮：7k7k 图标按游戏编号规则改名（39 个），映射写入 assets/skill-icons-7k7k.json。 第 55 轮：把磁盘上的全部图标登记进索引（补 97 条），并标出未被引用的。 第 55 轮：把未被任何地方引用的 0 个图标隔离到 _tmp_test_out/skill-icons-unused/（画的是不同版本，未删）。"
+ "note": " 第 55 轮：按官方技能表 + 图鉴行列对应补齐技能图标（写出 159 张）。 第 55 轮：按官方技能表 + 图鉴行列对应补齐技能图标（写出 159 张）。 第 55 轮：从图鉴裁的 159 个图标**未接入**（行内列序↔技能ID 的假设未通过验证），移到 _tmp_test_out/skill-icons-candidate/ 待核对。assets/skills 只保留已核对的原版 17 个。 第 55 轮：从 7k7k 角色大全接入 39 个技能图标（名字+元素双确认；已用技能保持官方图鉴版）。 第 55 轮：7k7k 图标按游戏编号规则改名（39 个），映射写入 assets/skill-icons-7k7k.json。 第 55 轮：把磁盘上的全部图标登记进索引（补 97 条），并标出未被引用的。 第 55 轮：把未被任何地方引用的 0 个图标隔离到 _tmp_test_out/skill-icons-unused/（画的是不同版本，未删）。 第 55 轮：把磁盘上的全部图标登记进索引（补 9 条），并标出未被引用的。"
 }
