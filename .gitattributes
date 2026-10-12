@@ -1,0 +1,17 @@
+# ★ 一律**不做**换行符转换。
+#   本机 git 全局 `core.autocrlf=true`，会把仓库里的 LF 在检出时改成 CRLF；
+#   而回归里有按**字节数**核对数据表的断言（例：`skills-official.js` 必须是 83448 B），
+#   换行符一改就是几百字节的差 → 全线假红。所以这里显式关掉转换（仓库内也已设 core.autocrlf=false，
+#   但 .gitattributes 对**别人克隆**时同样生效，光靠本地配置不够）。
+* -text
+
+# 显式标二进制（便于 GitHub 折叠 diff）
+*.png binary
+*.jpg binary
+*.gif binary
+*.webp binary
+*.rgba binary
+*.zip binary
+*.exe binary
+*.mp3 binary
+*.swf binary

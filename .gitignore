@@ -1,0 +1,16 @@
+# 运行期产物 / 调试草稿 —— 不入库
+_tmp_test_out/
+.crops/
+_probe-out*/
+_probe-out*.log
+*.tmp
+
+# 内嵌 Python 运行时：由 `_tools/setup-python-pil.mjs` 从**已入库的**
+#   `_tools/py-embed-3.11.9.zip` 解出来（144 MB / 4374 个文件，全是第三方包）。
+#   克隆后跑一次 setup 就能复原，没必要把 site-packages 塞进版本库。
+_tools/py/
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+desktop.ini
