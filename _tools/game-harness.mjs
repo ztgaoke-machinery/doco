@@ -86,6 +86,8 @@ class FakeCtx {
   beginPath() { this._c('beginPath') } closePath() { this._c('closePath') }
   moveTo() { this._c('moveTo') } lineTo() { this._c('lineTo') }
   arc() { this._c('arc') } ellipse() { this._c('ellipse') } rect() { this._c('rect') }
+  // 2026-10-05 补：结算页曲边背景用 quadraticCurveTo（真实浏览器有、这里之前没有 → 帧异常）
+  quadraticCurveTo() { this._c('quadraticCurveTo') } bezierCurveTo() { this._c('bezierCurveTo') }
   fill() { this._c('fill') } stroke() { this._c('stroke') } clip() { this._c('clip') }
   fillRect(x, y, w, h) {
     this._c('fillRect')
@@ -169,11 +171,20 @@ class FakeCtx {
 class FakeCanvas extends Emitter {
   constructor(w, h) {
     super('canvas')
-    this.width = w; this.height = h
+    // ★ DPR 感知画布适配：画布尺寸在测试台里**恒为逻辑尺寸**（960×560）。
+    //   fit() 会把 cvs.width 改成「CSS 尺寸 × 设备像素比」的高分辨率后备缓冲
+    //   （那是"设备像素"概念）；无头测试台既没有 CSS 尺寸也没有设备像素，
+    //   所以这里**忽略写入**，保持逻辑尺寸。否则所有按 960×560 为基准的判据
+    //   （check-canvas-bounds/text、pixel-canvas、real-images…）都会按放大尺寸去算，全线错位。
+    this._w = w; this._h = h
     this.style = {}
     this._ctx = new FakeCtx(this)
     this._rect = { left: 0, top: 0, width: w, height: h }
   }
+  get width() { return this._w }
+  set width(_v) { /* 忽略：测试台固定逻辑尺寸 */ }
+  get height() { return this._h }
+  set height(_v) { /* 忽略：测试台固定逻辑尺寸 */ }
   getContext() { return this._ctx }
   getBoundingClientRect() { return this._rect }
   // 把 1:1 映射（缩放比 1）算出的画布坐标换算成 client 坐标

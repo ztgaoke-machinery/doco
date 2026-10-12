@@ -40,5 +40,11 @@
   }
 
   window.DKDbbGame = window.DKDbbGame || {}
-  window.DKDbbGame.core = { cvs, ctx, W, H, S }
+  // DPR 感知画布的共享量（第 108 轮增量）：
+  //   view.sx / view.sy —— 逻辑坐标 960×560 → 后备缓冲的缩放比，由 core/canvas.js 的 fit() 每次数值；
+  //   view.dprOff      —— 高清开关（?dpr=off 启动参数默认关；顶栏「高清」按钮随时切换）。
+  //   之所以放在内核：canvas.js 写、game.js 的 draw() 读、boot.js 的按钮切、mouse.js 换算逻辑尺寸，
+  //   四个模块都要看见，不能藏在某个模块内部（否则就是双实现）。
+  const view = { sx: 1, sy: 1, dprOff: /[?&]dpr=(0|off|false)/.test(location.search) }
+  window.DKDbbGame.core = { cvs, ctx, W, H, S, view }
 })()

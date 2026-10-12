@@ -133,6 +133,14 @@
   // 与键盘 V / K 等价。用同一个 openSkillPanel()，避免按钮和键盘走两套逻辑。
   const btnSkills = document.getElementById('btn-skills')
   if (btnSkills) btnSkills.addEventListener('click', () => openSkillPanel())
+  // 高清渲染开关：切换 DPR 感知，立刻按新倍率重算画布后备缓冲。
+  // 关掉 = 旧行为（后备缓冲固定 960×560，靠浏览器放大），方便直接 A/B 对比。
+  {
+    const btnDpr = document.getElementById('btn-dpr')
+    const syncDprBtn = () => { if (btnDpr) btnDpr.textContent = G.core.view.dprOff ? '高清 关' : '高清 开' }
+    if (btnDpr) btnDpr.addEventListener('click', () => { G.core.view.dprOff = !G.core.view.dprOff; fit(); syncDprBtn() })
+    syncDprBtn()
+  }
   window.addEventListener('keydown', (e) => {
     const k = e.key.toLowerCase()
     if (k === 'm') document.getElementById('btn-mute').click()

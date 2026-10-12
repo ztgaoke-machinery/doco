@@ -9,7 +9,7 @@
   // `game/core/state.js`，由 `window.DKDbbGame.core` 统一提供。
   // 这里只做一次解构 —— 主体内部对 S / ctx / W / H 的引用一处都不用改。
   const G = window.DKDbbGame
-  const { cvs, ctx, W, H, S } = G.core
+  const { cvs, ctx, W, H, S, view } = G.core
 
   // 领域层纯函数（第 72 轮重构批次 2）：战斗数值的**纯叶子**已迁到
   // `game/domain/battle-math.js`（双通道 / 同属性加成 / defFactor / 速度倍率）。
@@ -494,6 +494,10 @@
   // （第 72 轮重构 · 批次 8 · 界面绘制：drawResult 已迁到 game/ui/result.js，由顶部「解构 shim」取用）
 
   function draw() {
+    // ★ DPR 感知：每帧把逻辑坐标系 960×560 映射到高分辨率后备缓冲。
+    //   必须每帧重设 —— 中途若有代码把上下文 transform 动过（或 save/restore 不平衡），
+    //   下一帧也会自动纠正回来。有 setTransform 才调（无头测试台的假 ctx 没有该方法）。
+    if (ctx.setTransform) ctx.setTransform(view.sx, 0, 0, view.sy, 0, 0)
     ctx.clearRect(0, 0, W, H)
     switch (S.mode) {
       case 'title': drawTitle(); break
