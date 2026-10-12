@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>多克多比 · 浮空群岛</title>
 <link rel="stylesheet" href="game/style.css">
+<!-- 网页版存档种子（自动生成，纯 ASCII）：双击 game.html 走 file:// 时读不到 exe 的 save.json，
+     靠这份 <script> 副本让「网页版」与「exe」用同一份存档。改完存档跑 _tools/gen-web-save.mjs 重新生成。 -->
+<script src="save-web.js"></script>
 </head>
 <body>
 <div id="app">
@@ -14,12 +17,18 @@
          为什么用 DOM input 而不是在 canvas 上抓键盘：**中文要走输入法**，
          自己抓 keydown 只能拿到 ASCII，玩家就没法起中文名了。
          这个框平时隐藏，改名时才显示并 focus；确认后把值交给游戏。 -->
-    <input id="nameInput" type="text" maxlength="12" autocomplete="off" spellcheck="false"
-           style="display:none;position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
-                  width:300px;padding:10px 14px;font-size:20px;text-align:center;
-                  border:2px solid #ffd23f;border-radius:10px;outline:none;
-                  background:rgba(8,12,22,.96);color:#ffe45e;z-index:50;
-                  font-family:'Microsoft YaHei',sans-serif">
+    <!-- 轮次99-③：maxlength 12→10（用户：名字长度限制在 10 个字）；placeholder 由 JS 在首次取名时设置。
+         轮次103：输入框搬进取名大框 #namePanel（标题「请输入你的名字」+ 输入框 + 确定按钮）。
+         首次取名走 big 模式（带标题和确定钮）；聊天/改名的裸输入走 compact 模式（无框，观感同旧版）。 -->
+    <div id="namePanel" style="display:none">
+      <div class="np-title">请输入你的名字</div>
+      <input id="nameInput" type="text" maxlength="10" autocomplete="off" spellcheck="false"
+             style="display:none;width:280px;padding:10px 14px;font-size:20px;text-align:center;
+                    border:2px solid #ffd23f;border-radius:10px;outline:none;
+                    background:rgba(8,12,22,.96);color:#ffe45e;
+                    font-family:'Microsoft YaHei',sans-serif">
+      <button id="nameOk" type="button" title="确定"></button>
+    </div>
     <div id="loading">
       <div class="ld-logo">多克多比</div>
       <div class="ld-sub">浮 空 群 岛</div>
@@ -42,6 +51,7 @@
     <button class="tbtn" id="btn-skills" title="技能面板（V 或 K）—— 搭配技能：点左边格子选中、点右边技能库装备">技能</button>
     <button class="tbtn" id="btn-gift" title="在线礼包（T）—— 在线 10/20/30 分钟各一份，含白色彩晶石碎片">礼包</button>
       <button class="tbtn" id="btn-save" title="存档已自动保存">💾 已存档</button>
+      <button class="tbtn" id="btn-dpr" title="高清渲染开关：画布按设备像素渲染，文字与边线更清楚。关掉＝旧行为，可直接对比">高清 开</button>
       <button class="tbtn" id="btn-mute" title="静音 (M)">🔊</button>
       <button class="tbtn" id="btn-vol-down" title="音量 -">−</button>
       <span class="tb-vol" id="tb-vol">55</span>
@@ -117,6 +127,8 @@
   <script src="game/ui/panels.js"></script>
   <script src="game/ui/places.js"></script>
   <script src="game/ui/zukan.js"></script>
+  <!-- 界面层（第 73 轮 · 模块 8）：原版状态卡（主页左上角 + 战斗左上角共用同一张；素材 assets/ui/bottombar/） -->
+  <script src="game/ui/hud.js"></script>
   <!-- 界面层（批次 6）：战斗视图（指令布局 / 消息框 / 结印界面 / 出手顺序条 / 整块战斗画面） -->
   <script src="game/ui/battle-view.js"></script>
   <!-- 界面层（批次 7）：大地图（七大地形与通道图 / 几何 / 岛名标签 / 命中测试 / 整块绘制） -->

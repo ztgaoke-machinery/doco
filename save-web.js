@@ -1,0 +1,6 @@
+// AUTO-GENERATED - DO NOT EDIT BY HAND.
+// Web build (opened via file://) cannot fetch ../save.json, so game.html loads this
+// <script> copy to keep the web build and the exe build on the SAME save file.
+// Source: ../save.json ; regenerate with: node _tools/gen-web-save.mjs
+// Kept pure ASCII on purpose (test-glyphs scans every script referenced by game.html).
+window.__DKDbb_WEB_SAVE__ = {"playerName":"\u591a\u6bd4","form":"\u5149\u591a\u6bd4","forms":["\u514b\u7f57 \u591a\u6bd4","\u9f99\u591a\u6bd4","\u6697\u591a\u6bd4","\u5149\u591a\u6bd4","\u9634\u591a\u6bd4","\u4fee\u7f57\u00b7\u6108 \u591a\u6bd4"],"loadouts":{},"questsDone":[],"level":99,"exp":393,"hp":16341468,"mp":89385,"maxHp":16341468,"maxMp":89385,"visited":[2,43,30,86,38,57,10,35,8,29,44,54,65,18,12,6,68,90,42,26,69,28,67],"defeated":[],"items":{},"soya":[70001,70006,70005,70003,70004,70002],"soyaActive":70002,"gold":202,"crystal":0,"questStage":0,"warKills":{"2":1,"8":1,"35":2,"43":1,"44":3,"57":1,"69":1,"86":3},"warDone":[],"attrs":{"wisdom":0,"brave":0,"love":0,"charm":0,"fame":0},"dungeonClears":{},"shards":8,"white":0,"crystalDay":"2026-09-30","crystalToday":0,"points":0,"voidCrystal":0,"costumes":{},"costumeWorn":null,"savedAt":1791525096399,"difficulty":"easy","playSeconds":2719.843599996577,"started":true,"__v":2,"_lastScene":67,"_vol":0.55,"onlineGift":{}};

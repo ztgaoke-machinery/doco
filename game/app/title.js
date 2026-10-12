@@ -15,7 +15,7 @@
   // 同层 / 界面层（惰性箭头：调用时才解析，故加载顺序无关）。
   const applySaveToRuntime = (...a) => G.app.player.applySaveToRuntime(...a)
   const wireNameInput = (...a) => G.app.rename.wireNameInput(...a)
-  const beginRename = (...a) => G.app.rename.beginRename(...a)
+  const promptFirstName = (...a) => G.app.rename.promptFirstName(...a)
   const sceneBgmFor = (...a) => G.app.bgm.sceneBgmFor(...a)
   const titleState = () => G.ui.titleState()
 
@@ -44,6 +44,13 @@
     titleState().view = 'main'
     audio.playBgm(S.current ? (S.current.bgm || sceneBgmFor(S.current)) : null)
     audio.sfx('assets/sfx/onClick_03.mp3')
+    // 【轮次104 用户口径】进世界这一刻才检查取名：这个存档**没创建过名字**（nameChosen 非真）
+    //   → 弹取名大框（读档选槽/继续冒险都各有一次机会，确认后永不再弹）；**建过名字就不弹**。
+    //   ★开机主菜单**绝不弹**（用户明确要求删掉"打开游戏就显示创建名字"）。
+    if (!save.data.nameChosen) {
+      wireNameInput()
+      promptFirstName()
+    }
   }
 
   // 在**指定槽**里新建角色（第 56 轮：用户报"新的冒险为什么清空存档一、不该能选建档位置吗"）
@@ -53,10 +60,8 @@
     save.newGame(n)                 // newGame 会把当前槽切成 n 并重置数据
     T2.view = 'main'; T2.sel = 0; T2.msg = ''; T2.newSlot = null
     enterWorldFromMenu()
-    // 新档开好之后**顺手让玩家起个名字**（第 54 轮：用户要的"起名字功能"）。
-    // 不强制：直接 Esc 或点别处就保持默认名，绝不挡住进游戏。
-    wireNameInput()
-    beginRename('player')
+    // 【轮次104】新档 nameChosen=false，enterWorldFromMenu 里会自动弹取名大框，
+    //   这里不再单独调 beginRename（避免弹两次）。行为与用户认可的"新的冒险会弹取名"一致。
     toast(`已在存档槽 ${n} 新建角色`)
   }
 

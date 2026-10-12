@@ -12,17 +12,20 @@
 
 html, body {
   height: 100%;
-  background: var(--bg);
+  background: #06090f url(../assets/ui/bg_page.png) center / cover no-repeat fixed;
   color: var(--text);
   font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", system-ui, sans-serif;
   overflow: hidden;
 }
 
+/* 轮次99-①：游戏窗口外（非全屏/全屏的左右黑边）改铺多克多比壁纸。
+   body 背景图之上压一层极轻暗罩，保证顶栏/帮助文字仍清晰、不喧宾夺主。 */
 body::before {
   content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
   background:
     radial-gradient(ellipse 65% 50% at 50% 0%, rgba(67, 217, 200, .10), transparent 70%),
-    radial-gradient(ellipse 60% 45% at 50% 100%, rgba(255, 210, 63, .07), transparent 70%);
+    radial-gradient(ellipse 60% 45% at 50% 100%, rgba(255, 210, 63, .07), transparent 70%),
+    rgba(6, 9, 15, .22);
 }
 
 #app {
@@ -149,3 +152,31 @@ kbd {
 @media (max-width: 720px) {
   .tb-title, .help { display: none; }
 }
+
+/* ---------- 轮次103：取名大框（首次取名：标题 + 输入框 + 确定按钮） ---------- */
+/* big 模式（首次取名）有外框/标题/确定钮；compact 模式（聊天、改名）只露输入框，观感与旧版裸输入一致 */
+#namePanel {
+  position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
+  display: none; flex-direction: column; align-items: center; gap: 16px;
+  z-index: 60;
+}
+#namePanel.big {
+  padding: 26px 40px 24px;
+  background: linear-gradient(180deg, rgba(16,28,54,.97), rgba(8,14,28,.97));
+  border: 3px solid #ffd23f; border-radius: 16px;
+  box-shadow: 0 12px 44px rgba(0,0,0,.6), inset 0 0 0 2px rgba(255,210,63,.22);
+}
+#namePanel .np-title {
+  display: none; white-space: nowrap;
+  font-family: "Microsoft YaHei", sans-serif; font-size: 22px; font-weight: 700;
+  color: #ffe45e; text-shadow: 0 2px 0 #131313; letter-spacing: 3px;
+}
+#namePanel.big .np-title { display: block; }
+#nameOk {
+  display: none; width: 140px; height: 55px;
+  border: 0; padding: 0; cursor: pointer; outline: none;
+  background: url(../assets/ui/name_ok.png) center / 100% 100% no-repeat;
+}
+#namePanel.big #nameOk { display: block; }
+#nameOk:hover { background-image: url(../assets/ui/name_ok_h.png); }
+#nameOk:active { transform: translateY(1px); }
