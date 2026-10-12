@@ -562,6 +562,9 @@
         id: s.id, file: s.file, w: s.w, h: s.h,
         name: s.title, desc: s.desc,
         kind: s.kind,
+        // 逐场景可行走 mask（白=可走 黑=空气墙，与场景图同尺寸）。
+        // 只有在 manifest 里给了 walk 字段的场景才有；没有则退回全局矩形 WALK 区。
+        walk: s.walk || null,
         island: null, npcs: [], monsters: [],
       }
     }
