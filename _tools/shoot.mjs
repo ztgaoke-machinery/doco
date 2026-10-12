@@ -107,8 +107,17 @@ if (fs.existsSync(manifestPath)) {
 console.log('预解码图片 ' + decodedCount + ' 张（缺 ' + missingCount + '）')
 
 // ---------- 环境 ----------
+// ★ 后备缓冲**固定 960×560**，且必须忽略对 canvas.width/height 的写入：
+//   core/canvas.js 的 fit() 会按 devicePixelRatio 把画布尺寸改成 cssW×dpr（这里算出来 1286×750），
+//   再反推 view.sx = cvs.width / 960。真画布会同步扩大后备缓冲，我们的 PixelCtx.buf 是建好就不动的，
+//   于是整帧被放大 1.34 倍塞进 960×560 的缓冲 → 右侧和底部约 1/4 直接画到画面外
+//   （结算页右半边、确定按钮就是这么消失的）。让尺寸写入变成空操作，view.sx 就回到 1，
+//   等价于浏览器加 ?dpr=off 的旧行为 —— 截图核对要的是**版式**，高清像素交给真浏览器验收。
 const canvas = {
-  width: 960, height: 560,
+  get width() { return 960 },
+  set width(v) { },
+  get height() { return 560 },
+  set height(v) { },
   _fb: makeFramebuffer(960, 560),
   _textRenderer: null,
   _onCall: null,
@@ -854,9 +863,23 @@ if (sp && sp.monsters.length) {
       console.log('  （这只多比没有结印技，跳过结印截图）')
     }
   }
-  // 打完这场（最多 600 帧；玩家不再出招时怪也会把它打死，不会卡住）
-  for (let i = 0; i < 600 && S().mode === 'battle'; i++) T.step(1)
-  if (S().mode === 'result') shot('13-result')
+  // 打完这场：每回到指令阶段就替玩家出「攻击」，最多 900 帧。
+  //   原来这里只是空转 600 帧"等怪把玩家打死"，但前面为了拍冲刺把玩家 HP 抬到了 99999，
+  //   加上战斗结果本身有随机性 → 有时 600 帧还没收场，mode 仍是 battle，
+  //   于是 `if (S().mode === 'result')` 直接不进，**结算页一张都不拍**（排查时踩过一次）。
+  for (let i = 0; i < 900 && S().mode === 'battle'; i++) {
+    const b = S().battle
+    if (b && b.phase === 'command' && b.menu === 'main') { DBG().selectCommand('攻击'); T.key('Enter') }
+    T.step(1)
+  }
+  if (S().mode !== 'result') console.log('  ⚠ 这场没收场（mode=' + S().mode + '），跳过结算页截图')
+  // 入场动画 0.35s 没走完就拍 → 整页是"滑到一半"的错位图（而且越靠右越像正常，极易看漏）。
+  //   所以**按时间推进**而不是按帧数：拍之前先把 resultT 顶过 animDur。
+  if (S().mode === 'result') {
+    for (let i = 0; i < 120 && (S().resultT || 0) < 0.4; i++) T.step(1)
+    console.log('  resultT=' + (S().resultT || 0).toFixed(3))
+    shot('13-result')
+  }
 } else {
   console.log('  （没找到带怪的场景）')
 }
@@ -943,7 +966,10 @@ if (sp && sp.monsters.length) {
     T.step(6)
     shot('19-battle-item-use')
     for (let i = 0; i < 400 && S().mode === 'battle'; i++) T.step(1)
-    if (S().mode === 'result') { shot('19b-result-after-item'); S().mode = 'explore'; S().battle = null; S().result = null }
+    if (S().mode === 'result') {
+      for (let i = 0; i < 120 && (S().resultT || 0) < 0.4; i++) T.step(1)
+      shot('19b-result-after-item'); S().mode = 'explore'; S().battle = null; S().result = null
+    }
   }
 }
 S().battle = null; S().result = null; S().mode = 'explore'

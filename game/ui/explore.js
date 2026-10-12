@@ -1,10 +1,10 @@
 /* 多克多比 · 界面层：场景探索（第 72 轮重构 · 批次 7）
-   —— 场景里的一切"画"：小怪 / NPC / 主角 / 点击目标标记 / 左右出口 / 顶栏信息与经验条。
-   读内核共享状态 S（current / player / nearby / warp 等）与内容表 D，写 canvas；
+   —— 场景里的一切"画"：小怪 / NPC / 主角 / 点击目标标记 / 左右出口 / 左上角原版状态卡。
+   读内核共享状态 S（current / player / nearby / warp 等），写 canvas；
    不碰存档、不做业务判定（金币与等级经 G.app.saveData 取，角色绘法经 G.app.* 取）。
    依赖：内核 `G.core`（S / ctx / W / H / drawMonster）+ 引擎 `window.DKDbb`（util / text / anim）
-        + `window.DKDbbMouse`（M）+ 内容表 `window.DKDbbData`（D）
-        + 同层 `G.ui`（districtOfScene，来自 worldmap.js）
+        + `window.DKDbbMouse`（M）
+        + 同层 `G.ui`（drawHudCard，来自 hud.js）
         + 应用层 G.app（scene / spawn / warreport / player 与绘法桥）。
    只经 G.ui 出口对外，game.js 用「解构 shim」取用（调用点一处不改）。 */
 (() => {
@@ -12,9 +12,7 @@
   const G = window.DKDbbGame
   const { S, ctx, W, H, drawMonster } = G.core
   const { util, text, anim } = window.DKDbb
-  const D = window.DKDbbData
   const M = window.DKDbbMouse
-  const { districtOfScene } = G.ui
 
   // 应用层桥（惰性箭头：调用时才解析，故加载顺序无关）。
   const sceneExits = (...a) => G.app.scene.sceneExits(...a)
@@ -31,6 +29,7 @@
   const drawCostumeFigure = (...a) => G.ui.drawCostumeFigure(...a)
   const drawFigureWalking = (...a) => G.ui.drawFigureWalking(...a)
   const drawWarButton = (...a) => G.ui.drawWarButton(...a)
+  const drawHudCard = (...a) => G.ui.drawHudCard(...a)
   // 存档读取经桥（ui 层不许直接读存档）：行为与原来 `save.data` 等价。
   const saveData = () => G.app.saveData()
 
@@ -228,35 +227,15 @@
     // 顶栏「战报」按钮（原版入口）
     drawWarButton()
 
-    // 顶部信息
-    const sv0 = saveData()
-    text.stroked(ctx, sc.name || `场景 ${sc.id}`, 26, 42, { size: 21, color: '#ffd23f' })
-    // 所属地形（官方七大地形）+ 本岛场景位置。
-    // 这里**不再**列"可前往的岛屿"：那是大地图上的关联，放在场景里会和
-    // 左右边缘的场景出口混淆。场景内只讲场景级的事。
-    {
-      const dist = districtOfScene(sc.id)
-      const ex = sceneExits(sc.id)
-      const head = dist ? `【${dist.name}】` : (sc.islandName ? `【${sc.islandName}】` : '')
-      const tail = ex && ex.total > 1
-        ? `　本岛场景 ${ex.index + 1}/${ex.total}　${ex.left != null ? '← 左可通行' : '（岛的一端）'}`
-        : ''
-      text.stroked(ctx, head + tail, 26, 66,
-        { size: 12, color: '#5ee06a', weight: 'normal', lw: 3 })
-    }
     // 快捷键提示行：右端**留出「战报」按钮的位置**（按钮从 W-100 起），否则两者会叠在一起
-    text.stroked(ctx, `左键点击 移动/交互　B 背包变身　G 杂货铺（金币 ${sv0.gold}）　L 图鉴　Tab 大地图　Q 任务`,
+    text.stroked(ctx, `左键点击 移动/交互　B 背包变身　G 杂货铺（金币 ${saveData().gold}）　L 图鉴　Tab 大地图　Q 任务`,
       W - 110, 40, { size: 12.5, align: 'right', color: '#cfd6e4', weight: 'normal', lw: 3 })
 
-    // 等级经验条
-    const sv = saveData()
-    const need = D.expToNext(sv.level)
-    const bx = 26, by = 80, bw = 190, bh = 12
-    ctx.fillStyle = 'rgba(8,12,22,.8)'; ctx.fillRect(bx - 2, by - 2, bw + 4, bh + 4)
-    ctx.fillStyle = '#1b2334'; ctx.fillRect(bx, by, bw, bh)
-    ctx.fillStyle = '#43d9c8'; ctx.fillRect(bx, by, bw * util.clamp(sv.exp / need, 0, 1), bh)
-    ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 1; ctx.strokeRect(bx + .5, by + .5, bw - 1, bh - 1)
-    text.stroked(ctx, `Lv.${sv.level}　EXP ${sv.exp}/${need}`, bx, by + 27, { size: 12, weight: 'normal', lw: 3, color: '#9fb0cc' })
+    // ★ 主界面左上角状态卡（原版素材）——**取代**原来我们自己拼的「场景名 / 地形 / Lv.EXP 条」
+    //   那一整块（成品第 105 轮的口径：原版这块位置就是「LV. + 头像 + 血条 + 蓝条 + 名字条」）。
+    //   ★ 只在**纯 explore** 时画：对话 / 任务列表 / 战报界面会把 drawExplore() 当底图再盖一层
+    //     自己的面板，卡片会从面板缝隙里露出来压字。
+    if (S.mode === 'explore' && !S.dialog) drawHudCard()
   }
 
   // 向约定的出口注册（批次 7：界面层只画 + 布局）

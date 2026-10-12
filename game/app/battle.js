@@ -420,6 +420,9 @@
     const p = {
       name: save.data.playerName, element: S.form.element, level: save.data.level,
       hp: save.data.hp, maxHp: save.data.maxHp, mp: save.data.mp, maxMp: save.data.maxMp,
+      // 状态卡血/蓝条的**显示值**：每帧追向真实 hp/mp，扣血时条一点点退下去
+      //（真实值瞬间跳变、条也跟着瞬间跳就看不出"削减"了）。推进见 battleTick。
+      showHp: save.data.hp, showMp: save.data.mp,
       stats: st, buffs: [], isPlayer: true, flash: 0, dead: false,
       // 结印技要用的 SP。官方《结印技能特点》：攻击或被打都会积 SP，
       // 槽满得 1 点，**每个多比最多积累 3 SP**，普通战斗常常攒到 1 点就打完了，
@@ -1101,6 +1104,21 @@
     }
     for (const u of [b.player, ...b.enemies]) if (u.flash > 0) u.flash -= dt
 
+    // ---- 状态卡血/蓝条的"削减"：显示值平滑追向真实值 ----
+    // 真实 hp/mp 是**瞬间**变的（伤害结算一次就扣完），条如果也瞬间变就只是"跳一格"。
+    // 这里让显示值按指数逼近真实值，看起来就是条一点点退下去；数字跟着显示值一起滚。
+    // 逼近到 0.6 以内直接吸附，避免永远差一点点、数字停在 71 不上不下去。
+    {
+      const pb = b.player
+      if (pb.showHp == null) pb.showHp = pb.hp
+      if (pb.showMp == null) pb.showMp = pb.mp
+      const e = 1 - Math.exp(-dt * 7)
+      pb.showHp += (pb.hp - pb.showHp) * e
+      pb.showMp += (pb.mp - pb.showMp) * e
+      if (Math.abs(pb.hp - pb.showHp) < 0.6) pb.showHp = pb.hp
+      if (Math.abs(pb.mp - pb.showMp) < 0.6) pb.showMp = pb.mp
+    }
+
     // 把战斗内的血量同步回存档。
     // 原来只在胜负结算时才写 save.data.hp，后果有两个：
     //   1) 战斗中途关掉游戏 → 血量回到开战前（回满）
@@ -1124,9 +1142,12 @@
     } else if (b.phase === 'over') {
       b.t += dt
       if (b.t > 1.8) {
-        if (b.victory) S.result = { win: true, exp: b.rewardExp, gold: b.rewardGold, name: b.enemies[0].name, dropForm: b.dropForm || null }
+        if (b.victory) S.result = { win: true, exp: b.rewardExp, gold: b.rewardGold, name: b.enemies[0].name, dropForm: b.dropForm || null, dropSoya: b.dropSoya || null, shards: b.shardDrop || 0 }
         else { save.data.hp = save.data.maxHp; save.data.mp = save.data.maxMp; save.persist(); S.result = { win: false, name: b.enemies[0].name } }
-        S.mode = 'result'; b.t = 0
+        // ★ resultTagMode = 结算页「活动/组队」那组的高亮。单机版没有组队，用户 2026-10-06 拍板
+        //   **默认全部选「活动」** → 每场战斗都归位成 act，免得上一场被测试逻辑切成 team 就留在那。
+        //   resultT = 结算页开场动画计时，resultOkHover = 「确定」钮悬停态。
+        S.mode = 'result'; b.t = 0; S.resultT = 0; S.resultOkHover = false; S.resultTagMode = 'act'
       }
     }
   }

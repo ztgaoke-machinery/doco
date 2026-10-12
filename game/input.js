@@ -45,7 +45,7 @@
   const { dialogOptionRects, drawDialog, questRowHit, drawQuestList,
     WAR, warLayout, WAR_PER_PAGE, warPages, warButtonRect, warButtonHit, drawWarReport,
     drawTreasure, awakenRects, drawAwaken, MINI_PANEL, miniLayout, drawMinigames,
-    drawPick, drawResult } = G.ui
+    drawPick, drawResult, resultOkRect } = G.ui
   const { beginRename, applyRename, currentNameOf, displayNameOf, wireNameInput } = G.app.rename
   const { WAR_TARGET, warTasks, warTaskText, warClaim, warIslandProgress } = G.app.warreport
   const { TREASURE_DAILY, SHARDS_PER, dayKey, rollCrystalDay, crystalsToday, synthesizeCrystal,
@@ -1041,10 +1041,22 @@
       if (input.once('f') || input.once('F')) { const it = shopSelected(); for (let i = 0; i < 5; i++) buyItem(it) }
       if (input.once('Escape') || input.once('g') || input.once('G')) S.mode = 'explore'
     } else if (S.mode === 'result') {
-      // 点击任意处 = 继续（第 55 轮：用户要求"局内所有东西都能左键点击"，
-      // 原来这里只有键盘，鼠标点了没反应）
-      if (input.once(' ') || input.once('Enter') || input.once('Escape') || M.clicked) {
-        leaveBattle()
+      // 胜利（原版右半版式）→ 只走「确定」按钮（或空格/回车）：
+      //   删掉了 Esc 退出与"点击任意处继续"（有了明确按钮，乱点容易误触）。
+      // 战败（旧样式）→ 维持原来的任意键/任意点击继续。
+      S.resultT = (S.resultT || 0) + dt
+      if (S.result && S.result.win) {
+        const rc = resultOkRect()
+        let hover = false
+        if (M.inside) {
+          hover = M.x >= rc.x && M.x <= rc.x + rc.w && M.y >= rc.y && M.y <= rc.y + rc.h
+          M.applyCursor(cvs, hover)
+        }
+        S.resultOkHover = hover
+        if ((hover && M.clicked) || input.once(' ') || input.once('Enter')) leaveBattle()
+      } else {
+        S.resultOkHover = false
+        if (input.once(' ') || input.once('Enter') || input.once('Escape') || M.clicked) leaveBattle()
       }
     } else if (S.mode === 'questlist') {
       const list = Q.all.slice(0, 40)

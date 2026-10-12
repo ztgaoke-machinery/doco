@@ -36,6 +36,7 @@
   const playerActionIsSelfCast = (...a) => G.ui.playerActionIsSelfCast(...a)
   const drawFigure = (...a) => G.ui.drawFigure(...a)
   const drawBackground = (...a) => G.ui.drawBackground(...a)
+  const drawBattleStatusCard = (...a) => G.ui.drawBattleStatusCard(...a)
   const E_POS = (...a) => G.app.battleGeom.E_POS(...a)
   const POWER = (...a) => G.app.battleGeom.POWER(...a)
   // 索亚跳跃计时：变量声明在 game.js，用取值/设值桥共用同一份。
@@ -327,11 +328,14 @@
     })
 
     // 顶部标题条：显示当前场景与「对战中」
-    // 注意起点要避开左上角的队伍卡（46x46 @ 16,16）—— 早先写在 x=16，
-    // 文字正好压在卡片上（_tools/ui-overlap.mjs 的"按钮压字"检查抓出来的）。
+    // 起点要避开**左上角的状态卡**（模块 8 第 73 轮：原版主页 HUD 卡移植进战斗后占
+    //   x 8..243、y 12..~101）。早先这里写 x=78（当年只躲一张 46×46 的队伍卡），
+    //   现在正好压在卡片身上 → 改成贴着卡片右边缘起笔。
     ctx.fillStyle = 'rgba(8,12,22,.72)'
     ctx.fillRect(0, 0, W, 34)
-    text.stroked(ctx, `⚔ 对战中　${S.current ? S.current.name : ''}`, 78, 24,
+    const U = G.ui, card = U.BATTLE_CARD, hud = U.HUD
+    const titleX = card && hud ? Math.round(card.x + hud.w * hud.s + 12) : 78
+    text.stroked(ctx, `⚔ 对战中　${S.current ? S.current.name : ''}`, titleX, 24,
       { size: 13, color: '#ffd23f' })
 
     // ---------- 对手 ----------
@@ -581,50 +585,15 @@
       // （原来这里还有四颗小圆钮，纯装饰、点了没反应，已删）
     }
 
-    // ---------- 左上角队伍状态卡（原版：头像 + 等级牌 + 红血条 + 蓝魔条）----------
-    {
-      const cx0 = 8, cy0 = 8, cw = 236, ch = 62
-      ctx.fillStyle = 'rgba(10,18,34,.92)'
-      barRound(cx0, cy0, cw, ch, 10); ctx.fill()
-      ctx.strokeStyle = '#3aa0e8'; ctx.lineWidth = 2.5
-      barRound(cx0 + 1, cy0 + 1, cw - 2, ch - 2, 9); ctx.stroke()
-      // 头像
-      const av = 46, ax = cx0 + 8, ay = cy0 + 8
-      ctx.fillStyle = '#0d1c34'; ctx.fillRect(ax, ay, av, av)
-      const me = art.icon(S.form)
-      if (art.ready(me)) {
-        const iw = Math.round(av * (me.naturalWidth / me.naturalHeight))
-        ctx.drawImage(me, ax + (av - iw) / 2, ay, iw, av)
-      }
-      ctx.strokeStyle = '#7fb6e0'; ctx.lineWidth = 1.5; ctx.strokeRect(ax + .75, ay + .75, av - 1.5, av - 1.5)
-      // 等级牌
-      ctx.fillStyle = '#ffd23f'
-      ctx.fillRect(ax - 2, ay - 2, 26, 15)
-      text.stroked(ctx, String(p.level), ax + 11, ay + 11, { size: 11, align: 'center', color: '#3a2a00', lw: 0 })
-      // 红血条 + 蓝魔条
-      const bx2 = ax + av + 8, bw2 = cx0 + cw - 10 - bx2
-      ctx.fillStyle = '#3a0d10'; ctx.fillRect(bx2, ay + 4, bw2, 15)
-      ctx.fillStyle = '#e8453c'; ctx.fillRect(bx2 + 1, ay + 5, (bw2 - 2) * util.clamp(p.hp / p.maxHp, 0, 1), 13)
-      text.stroked(ctx, `${Math.round(p.hp)}/${p.maxHp}`, bx2 + bw2 / 2, ay + 16, { size: 11, align: 'center', color: '#fff', lw: 2 })
-      ctx.fillStyle = '#0e2438'; ctx.fillRect(bx2, ay + 24, bw2, 14)
-      ctx.fillStyle = '#3a9bff'; ctx.fillRect(bx2 + 1, ay + 25, (bw2 - 2) * util.clamp(p.mp / p.maxMp, 0, 1), 12)
-      text.stroked(ctx, `${Math.round(p.mp)}/${p.maxMp}`, bx2 + bw2 / 2, ay + 35, { size: 11, align: 'center', color: '#fff', lw: 2 })
-      text.stroked(ctx, S.form.name, bx2, ay + 52, { size: 11, weight: 'normal', lw: 3, color: '#9fb0cc' })
-    }
+    // ---------- 左上角战斗状态卡（轮次105：直接复用主页那张 HUD 卡）----------
+    // 用户："直接把目前主页面做好的状态栏移植到战斗系统内，道理都是一样的没任何区别"。
+    //   旧的那张手绘卡（头像 + 等级牌 + 红血条 + 蓝魔条 + 形态名）整块删掉，
+    //   改画 game/ui/hud.js 的同一张原版卡，只是落点 (8,12)、血蓝用平滑显示值 showHp/showMp。
+    drawBattleStatusCard(b, p)
 
-    // ---------- 战斗提示：只留最近一行 ----------
-    // 原来是一个 330×116 的日志框挂在左上角，官方没有这东西，而且挡掉一块战场。
-    // 现在只把**最后一条**消息显示在顶部中间，历史信息靠伤害飘字表达。
-    if (b.log.length) {
-      const last = b.log[b.log.length - 1]
-      ctx.save()
-      ctx.font = 'bold 13px "Microsoft YaHei", sans-serif'
-      const tw = ctx.measureText(last).width
-      ctx.fillStyle = 'rgba(8,12,22,.72)'
-      ctx.fillRect(W / 2 - tw / 2 - 12, 88, tw + 24, 24)
-      ctx.restore()
-      text.stroked(ctx, last, W / 2, 105, { size: 13, align: 'center', color: '#ffe45e', lw: 3 })
-    }
+    // ---------- 战斗提示：整块不显示（2026-10-04 用户要求）----------
+    // 原来把最后一条播报画在顶部中间（y≈88~112 深色底条），原版没有这块 → 删除绘制。
+    //   `b.log` 数据本身保留（伤害飘字与测试仍依赖它）。
 
     // ---------- 开场演出 ----------
     // 进场时双方从画面两侧滑入 + 显示「VS」，比直接跳进指令菜单更有仪式感

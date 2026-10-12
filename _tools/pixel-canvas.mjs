@@ -247,8 +247,21 @@ export class PixelCtx {
 
   beginPath() { this._c('beginPath'); this._path = [] }
   closePath() { this._c('closePath'); if (this._path.length) this._path.push(['close']) }
-  moveTo(x, y) { this._c('moveTo'); this._path.push(['move', ...apply(this.m, x, y)]) }
-  lineTo(x, y) { this._c('lineTo'); this._path.push(['line', ...apply(this.m, x, y)]) }
+  moveTo(x, y) { this._c('moveTo'); this._pt = apply(this.m, x, y); this._path.push(['move', ...this._pt]) }
+  lineTo(x, y) { this._c('lineTo'); this._pt = apply(this.m, x, y); this._path.push(['line', ...this._pt]) }
+  // 2026-10-11 补：二次曲线采样成折线。真实浏览器有 quadraticCurveTo，这里之前没有
+  //   → 结算页那块曲边背景一画就抛异常（战斗胜利页整帧崩掉）。
+  quadraticCurveTo(cx, cy, x, y) {
+    this._c('quadraticCurveTo')
+    const p0 = this._pt || apply(this.m, x, y), c = apply(this.m, cx, cy), p1 = apply(this.m, x, y)
+    for (let i = 1; i <= 24; i++) {
+      const t = i / 24, u = 1 - t
+      this._path.push(['line',
+        u * u * p0[0] + 2 * u * t * c[0] + t * t * p1[0],
+        u * u * p0[1] + 2 * u * t * c[1] + t * t * p1[1]])
+    }
+    this._pt = p1
+  }
   rect(x, y, w, h) {
     this._c('rect')
     const p = [apply(this.m, x, y), apply(this.m, x + w, y), apply(this.m, x + w, y + h), apply(this.m, x, y + h)]
