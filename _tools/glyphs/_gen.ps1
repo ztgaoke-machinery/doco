@@ -1,6 +1,6 @@
 ﻿Add-Type -AssemblyName System.Drawing
 $ErrorActionPreference = 'Stop'
-$outDir = 'C:\\Users\\wangbujue\\Desktop\\yuanmeng\\_tools\\glyphs'
+$outDir = 'C:\\Users\\Chinese\\Desktop\\新建文件夹 (2)\\【薪火计划】祇酒多克多比制作v1.20\\【薪火计划】祇酒多克多比制作v1.20\\2-源码-可重建\\_tools\\glyphs'
 $codes = Get-Content -Raw -Encoding UTF8 (Join-Path $outDir '_chars.json') | ConvertFrom-Json
 $perRow = 40
 $result = @{}
