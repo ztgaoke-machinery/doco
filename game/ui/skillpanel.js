@@ -50,7 +50,7 @@
     // 图标编号在 assets/forms.js 里，不在 D.SKILLS 里 —— 走 data.js 的惰性查询
     const file = D.skillIconFile ? D.skillIconFile(name) : null
     if (!file) return null
-    if (!skillIconCache.has(file)) { const im = new Image(); im.src = file; skillIconCache.set(file, im) }
+    if (!skillIconCache.has(file)) { const im = new Image(); im.src = window.DKDbb.assetUrl(file); skillIconCache.set(file, im) }
     const im = skillIconCache.get(file)
     return (im.complete && im.naturalWidth) ? im : null
   }

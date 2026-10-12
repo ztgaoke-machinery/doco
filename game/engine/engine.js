@@ -5,6 +5,21 @@
 
   const G = window.DKDbb = {}
 
+  // ================= 资产版本号（改素材后浏览器必刷新）=================
+  // 游戏是被启动器的本地 HTTP 服务打开的（http://127.0.0.1:端口/game.html），
+  // 同名 PNG 会被浏览器按 URL 缓存 —— 于是"改了贴图但这边一直是旧图"。
+  // **改素材后把下面的版本串 +1**，URL 变了浏览器就必须重新下载。
+  // 只在 http(s) 下加查询串：`file:`（直接双击 game.html）和测试台（没有 location.protocol）
+  // 一律不加，避免 file: 带查询串解析失败、也避免测试台按路径找不到素材。
+  G.ASSET_VER = '20261011a-src-round72'
+  console.log('[资产] ASSET_VER =', G.ASSET_VER)
+  G.assetUrl = (src) => {
+    if (typeof src !== 'string' || !src || /^(data:|blob:)/i.test(src)) return src
+    const proto = (typeof location !== 'undefined' && location && location.protocol) || ''
+    if (proto !== 'http:' && proto !== 'https:') return src
+    return src + (src.includes('?') ? '&' : '?') + 'v=' + G.ASSET_VER
+  }
+
   // ================= 存档 =================
   //
   // 用户反馈"存档重启了一下又从头开始了"。根因**不在存档代码**，而在打包方式：
@@ -153,6 +168,9 @@
       difficulty: 'easy',
       playSeconds: 0,    // 累计游玩时长
       started: false,    // 是否已经开过局（用于区分"空槽"和"新档"）
+      // 轮次99-③：首次进入游戏是否已完成取名。false = 还没取过名，进世界时弹「请输入您的游戏名」。
+      //   取过名后 persist 成 true；"以后修改名字"的功能用户说还没开发，这里只管首次取名。
+      nameChosen: false,
     },
     slot() { return this._slot },
     slotKey(n) { return n === 1 ? this._k : `${this._k}.slot${n}` },
@@ -165,16 +183,27 @@
       return null
     },
     async peekFile(n) {
-      if (typeof fetch !== 'function') return null
-      try {
-        const r = await fetch(`${this._fileUrl}?slot=${n}&t=${Date.now()}`, { cache: 'no-store' })
-        if (!r.ok) return null
-        const txt = await r.text()
-        if (!txt || txt.length < 4) return null
-        const o = JSON.parse(txt)
-        if (!o || typeof o !== 'object' || !Object.keys(o).length) return null
-        return o
-      } catch { return null }
+      if (typeof fetch === 'function') {
+        try {
+          const r = await fetch(`${this._fileUrl}?slot=${n}&t=${Date.now()}`, { cache: 'no-store' })
+          if (r.ok) {
+            const txt = await r.text()
+            if (txt && txt.length >= 4) {
+              const o = JSON.parse(txt)
+              if (o && typeof o === 'object' && Object.keys(o).length) return o
+            }
+          }
+        } catch { /* file:// 下 fetch('/__save') 必然失败 —— 落到下面的兜底 */ }
+      }
+      // ★ 网页版兜底（轮次105，用户："网页同步改"）：
+      //   双击 game.html 走 file://，fetch 读不了 exe 旁边的 save.json（跨源被拦），
+      //   改用 game.html 里 <script src="save-web.js"> 注入的同一份副本 →
+      //   于是「双击 exe」与「双击网页」看到的是**同一份存档**。
+      //   （http 模式下上面已经成功返回，走不到这里，所以不会盖掉 exe 的实时存档。）
+      if (n === 1 && typeof window !== 'undefined' && window.__DKDbb_WEB_SAVE__) {
+        return window.__DKDbb_WEB_SAVE__
+      }
+      return null
     },
     // 槽位摘要（主菜单/读档面板显示）。空槽返回 null。
     // 判定"有存档"的依据是 started 或 level>1 或 有访问过场景 —— 光有默认字段不算。
@@ -331,6 +360,19 @@
         } catch { }
       }, 400)
     },
+    // 立即落盘（绕过 400ms 防抖）—— 轮次103：nameChosen 这种"一次定终身"的标记必须当场写进
+    //   exe 服务器的 save.json；不然玩家确认完名字马上关游戏，文件里没这个字段，下次开机又弹取名框。
+    flushNow() {
+      clearTimeout(this._t)
+      if (typeof fetch !== 'function') return
+      const json = JSON.stringify(this.data)
+      const slot = this._slot
+      try {
+        fetch(`${this._fileUrl}?slot=${slot}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: json,
+        }).catch(() => { })
+      } catch { }
+    },
     // 开新档：把槽置为全新状态（主菜单「新的冒险」用，不刷新页面）
     newGame(n) {
       this._slot = Math.max(1, Math.min(SLOT_COUNT, n | 0 || this._slot))
@@ -360,29 +402,77 @@
   G.save.lastMigration = null
 
   // ================= 音频 =================
-  const audio = { bgm: null, sfxCache: {}, volume: 0.55, sfxOn: true, muted: false }
+  // bgm = 主音轨（场景曲 / 战斗曲，单槽位：播新的会停掉旧的）
+  // overlay = 叠加音轨（和主音轨**同时响**的一次性音频，见 playOverlay）
+  const audio = { bgm: null, overlay: null, sfxCache: {}, volume: 0.55, sfxOn: true, muted: false }
+  // 让两条音轨都跟上音量 / 静音设置
+  const syncAudioVol = () => {
+    const v = audio.muted ? 0 : audio.volume
+    if (audio.bgm) audio.bgm.volume = v
+    if (audio.overlay) audio.overlay.volume = v
+  }
+  const stopOverlay = () => {
+    if (audio.overlay) { try { audio.overlay.pause() } catch { } audio.overlay = null }
+  }
 
   G.audio = {
-    setVolume(v) { audio.volume = v; if (audio.bgm) audio.bgm.volume = audio.muted ? 0 : v },
+    setVolume(v) { audio.volume = v; syncAudioVol() },
+    isMuted() { return audio.muted },   // 只读查询（左缘音符图标要用；toggleMute 会翻状态不能拿来查）
     toggleMute() {
       audio.muted = !audio.muted
-      if (audio.bgm) audio.bgm.volume = audio.muted ? 0 : audio.volume
+      syncAudioVol()
       return audio.muted
     },
-    playBgm(file, { loop = true } = {}) {
+    // seekTo：起播就跳到第 seekTo 秒（默认 0 = 从头）。
+    //   用在"要和一段**已经存在于别处的**音乐床对齐"的场合 —— 战斗开场的战斗曲要与
+    //   《克雷斯塔！》里混着的那点很弱的战斗曲开头**同相**（见战斗演出 CINEMA 的 battleSkew）。
+    //   按 HTML 规范：元数据还没到时设 currentTime 会记成"默认起播位置"，不会抛错。
+    playBgm(file, { loop = true, seekTo = 0 } = {}) {
       if (!file) return
       if (audio.bgm && audio.bgm._src === file && !audio.bgm.paused) return
       if (audio.bgm) { try { audio.bgm.pause() } catch { } }
       const a = new Audio(file)
       a._src = file
+      a._startAt = seekTo > 0 ? seekTo : 0
       a.loop = loop
       a.volume = audio.muted ? 0 : audio.volume
+      if (seekTo > 0) { try { a.currentTime = seekTo } catch { } }
       a.play().catch(() => { })
       audio.bgm = a
     },
     stopBgm() { if (audio.bgm) { try { audio.bgm.pause() } catch { } audio.bgm = null } },
+    // ---------- 叠加音轨（overlay）----------
+    // 一条**独立于 bgm 的**音轨，用来和当前 BGM **同时出声**。
+    // 为什么需要它：`playBgm` 是单槽位，播新的会 `pause()` 掉旧的。而战斗开场的变身曲
+    //   《克雷斯塔！》必须**叠在战斗曲 music021 之上**响一遍，不能把战斗曲停掉 ——
+    //   否则音乐就断了，听完变身曲还要再从头重放一次战斗曲（轮次87 用户报的"战斗 bgm
+    //   跟着中断一起结束了，然后又重新开始播放"就是它）。所以变身曲走这条轨。
+    // 默认 loop:false —— 叠加音是"一次性"的，响完自动从槽位里退掉。
+    playOverlay(file, { loop = false } = {}) {
+      if (!file) return
+      stopOverlay()
+      const a = new Audio(file)
+      a._src = file
+      a.loop = loop
+      a.volume = audio.muted ? 0 : audio.volume
+      // 响完自动清槽位（不循环时才有意义），避免 __overlay() 一直指着一个已经停了的元素
+      a.addEventListener('ended', () => { if (audio.overlay === a) audio.overlay = null })
+      a.play().catch(() => { })
+      audio.overlay = a
+    },
+    stopOverlay,
+    // 当前叠加音轨的路径（给测试和无头工具读，游戏逻辑不用）
+    __overlay() { return audio.overlay ? audio.overlay._src : null },
+    // 叠加音轨是不是循环播放（给测试读）
+    __overlayLoop() { return audio.overlay ? !!audio.overlay.loop : null },
     // 当前正在放的 BGM 路径（给测试和无头工具读，游戏逻辑不用）
     __current() { return audio.bgm ? audio.bgm._src : null },
+    // 当前 BGM 起播时跳到的位置（秒）。给测试读：钉"战斗曲是不是往前跳了 battleSkew"。
+    __bgmSeek() { return audio.bgm ? (audio.bgm._startAt || 0) : null },
+    // 当前 BGM 元素是不是循环播放（给测试读）：
+    //   主音轨在战斗里放的是战斗曲 music021 → 必须 true（一直循环）；
+    //   变身曲《克雷斯塔！》走叠加音轨，它的 loop 用 __overlayLoop() 读（必须 false）。
+    __loop() { return audio.bgm ? !!audio.bgm.loop : null },
     sfx(file, vol = 0.45) {
       if (!audio.sfxOn || audio.muted || !file) return
       let a = audio.sfxCache[file]
@@ -484,7 +574,7 @@
       let im = artCache.get(src)
       if (!im) {
         im = new Image()
-        im.src = src
+        im.src = G.assetUrl(src)
         artCache.set(src, im)
       }
       return im
@@ -504,7 +594,7 @@
       let im = artCache.get(src)
       if (!im) {
         im = new Image()
-        im.src = src
+        im.src = G.assetUrl(src)
         artCache.set(src, im)
       }
       return im
@@ -532,7 +622,7 @@
       let im = artCache.get(src)
       if (!im) {
         im = new Image()
-        im.src = src
+        im.src = G.assetUrl(src)
         artCache.set(src, im)
       }
       return im

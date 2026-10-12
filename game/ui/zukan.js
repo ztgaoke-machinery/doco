@@ -106,7 +106,7 @@
   const zukanCache = new Map()
   function zukanImage(art) {
     if (!art) return null
-    if (!zukanCache.has(art)) { const im = new Image(); im.src = art; zukanCache.set(art, im) }
+    if (!zukanCache.has(art)) { const im = new Image(); im.src = window.DKDbb.assetUrl(art); zukanCache.set(art, im) }
     const im = zukanCache.get(art)
     return (im.complete && im.naturalWidth) ? im : null
   }

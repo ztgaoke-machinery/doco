@@ -11,7 +11,7 @@
 
   // ==================== 图片缓存 ====================
   function bgImage(file) {
-    if (!S.images.has(file)) { const im = new Image(); im.src = file; S.images.set(file, im) }
+    if (!S.images.has(file)) { const im = new Image(); im.src = window.DKDbb.assetUrl(file); S.images.set(file, im) }
     return S.images.get(file)
   }
 
@@ -20,7 +20,7 @@
   function itemImage(it) {
     const f = it && it.icon
     if (!f) return null
-    if (!itemCache.has(f)) { const im = new Image(); im.src = f; itemCache.set(f, im) }
+    if (!itemCache.has(f)) { const im = new Image(); im.src = window.DKDbb.assetUrl(f); itemCache.set(f, im) }
     const im = itemCache.get(f)
     return (im.complete && im.naturalWidth) ? im : null
   }
@@ -30,7 +30,7 @@
   function monImage(mon) {
     const f = mon.sprite
     if (!f) return null
-    if (!monCache.has(f)) { const im = new Image(); im.src = f; monCache.set(f, im) }
+    if (!monCache.has(f)) { const im = new Image(); im.src = window.DKDbb.assetUrl(f); monCache.set(f, im) }
     const im = monCache.get(f)
     return (im.complete && im.naturalWidth) ? im : null
   }

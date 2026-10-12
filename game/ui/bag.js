@@ -37,7 +37,7 @@
   const soyaCache = new Map()
   function soyaImage(sy) {
     if (!sy || !sy.art) return null
-    if (!soyaCache.has(sy.art)) { const im = new Image(); im.src = sy.art; soyaCache.set(sy.art, im) }
+    if (!soyaCache.has(sy.art)) { const im = new Image(); im.src = window.DKDbb.assetUrl(sy.art); soyaCache.set(sy.art, im) }
     const im = soyaCache.get(sy.art)
     return (im.complete && im.naturalWidth) ? im : null
   }
