@@ -11,11 +11,17 @@
   M.hover = null            // 当前悬停目标 {type, obj}
 
   // 把屏幕坐标换算成画布坐标（画布被 CSS 缩放）
+  // ★ DPR 感知后不能再拿 `cvs.width` 当逻辑宽 —— 它现在是**后备缓冲宽**
+  //   （可能是 1152/1536/3072），拿它换算会让点击位置整体偏移。
+  //   逻辑尺寸由 core/canvas.js 的 fit() 发布在 window.__DKDbb_VIEW__（默认 960×560）。
   function toCanvas(cvs, e) {
     const r = cvs.getBoundingClientRect()
+    const V = window.__DKDbb_VIEW__
+    const LW = (V && V.w) || 960
+    const LH = (V && V.h) || 560
     return {
-      x: (e.clientX - r.left) * (cvs.width / r.width),
-      y: (e.clientY - r.top) * (cvs.height / r.height),
+      x: (e.clientX - r.left) * (LW / r.width),
+      y: (e.clientY - r.top) * (LH / r.height),
     }
   }
 
@@ -186,9 +192,11 @@
     ctx.fillText('↑↓ 或鼠标选择　空格/点击 确定　Esc 关闭', x + PAD, y + h - 12)
   }
 
-  // 鼠标指针样式：悬停到可交互目标时变手型
-  M.applyCursor = function (cvs, hovering) {
-    const want = hovering ? 'pointer' : 'default'
+  // 鼠标指针样式：悬停到可交互目标时变手型。
+  //   第三参 icon：直接给一段 CSS cursor 值（如 url("assets/ui/cursor-wand.png") 6 4, pointer）
+  //   —— 战斗页"单体技能瞄准=魔法棒 / 道具瞄准=药瓶"走这条。
+  M.applyCursor = function (cvs, hovering, icon) {
+    const want = icon || (hovering ? 'pointer' : 'default')
     if (cvs.style.cursor !== want) cvs.style.cursor = want
   }
 })()

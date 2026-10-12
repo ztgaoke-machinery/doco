@@ -31,6 +31,15 @@
     大地之怒: { kind: 'earth', shape: 'fall', color: '#e0b877', color2: '#7a4a10', count: 7 },
     闪电: { kind: 'bolt', shape: 'bolt', color: '#eaffff', color2: '#5ac8ff' },
     旋风: { kind: 'wind', shape: 'wave', color: '#c8ffd8', color2: '#3fd47a', radius: 160 },
+    // 以下 6 个是成品第 66 轮补进技能表的 7k7k 技能（魔气弹/魔焰灼烧/血冰箭/魔羽箭/吸血蔓藤/血晶地刺）。
+    // 不给它们单独配的话会走 FX.BY_ELEMENT 兜底 —— 能用，但魔气弹属性是 null（会掉到形态属性），
+    // 血冰箭/血晶地刺这种"带血字的"也该有自己的颜色，所以逐个按描述配一版。
+    魔气弹: { kind: 'dark', shape: 'ball', color: '#e2e9ff', color2: '#5a7ae0' },
+    魔焰灼烧: { kind: 'flame', shape: 'ball', color: '#ffb347', color2: '#ff3b1a' },
+    血冰箭: { kind: 'frost', shape: 'spear', color: '#ffd9e2', color2: '#3fa9ff' },
+    魔羽箭: { kind: 'wind', shape: 'spear', color: '#eafff2', color2: '#3fd47a' },
+    吸血蔓藤: { kind: 'poison', shape: 'ball', color: '#d4ff7a', color2: '#4a7a1a' },
+    血晶地刺: { kind: 'earth', shape: 'spear', color: '#ffc9c9', color2: '#a8342a' },
   }
 
   // 兜底：按元素给一个默认特效
